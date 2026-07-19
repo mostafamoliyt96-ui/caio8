@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>🌍 CAIO Translate</title>
+    <style>
+        :root {
+            --primary: #007AFF;
+            --bg: #F2F2F7;
+            --card: #FFFFFF;
+            --text: #000000;
+            --text-secondary: #8E8E93;
+            --border: #C6C6C8;
+            --success: #34C759;
+            --error: #FF3B30;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        
+        main {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .lang-select {
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: rgba(0, 122, 255, 0.1);
+            border: 1px solid var(--primary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .lang-select:hover {
+            background: rgba(0, 122, 255, 0.15);
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            padding: 12px;
+            resize: vertical;
+            outline: none;
+            font-family: inherit;
+            min-height: 100px;
+            transition: border-color 0.2s ease;
+        }
+        
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        
+        textarea::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 16px 0;
+        }
+        
+        .translation-area {
+            font-size: 16px;
+            min-height: 60px;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(0, 122, 255, 0.05);
+            border: 1px solid var(--border);
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        
+        .translation-area.placeholder {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .translation-area.loading {
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .translate-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .translate-btn:hover:not(:disabled) {
+            background: #0051CC;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 122, 255, 0.3);
+        }
+        
+        .translate-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        .translate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover:not(:disabled) {
+            background: var(--bg);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+        
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .status-message {
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .status-message.show {
+            display: block;
+        }
+        
+        .status-message.success {
+            background: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+            border: 1px solid rgba(52, 199, 89, 0.3);
+        }
+        
+        .status-message.error {
+            background: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+            border: 1px solid rgba(255, 59, 48, 0.3);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .recommendations {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .recommendations-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .recommendation-item {
+            display: inline-block;
+            background: rgba(0, 122, 255, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .recommendation-item:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        @media (max-width: 480px) {
+            main {
+                padding: 16px;
+                border-radius: 8px;
+            }
+            
+            .action-btn {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="header">
+            <div class="header-title">🌍 CAIO Translate</div>
+            <button class="lang-select" id="target-lang">English ▼</button>
+        </div>
+        
+        <div id="status-message" class="status-message"></div>
+        
+        <div class="form-group">
+            <label class="form-label">Source Text</label>
+            <textarea id="source-text" placeholder="Paste text to translate..."></textarea>
+        </div>
+        
+        <button id="translate-btn" class="translate-btn">
+            <span>Translate</span>
+        </button>
+        
+        <div class="divider"></div>
+        
+        <div class="form-group">
+            <label class="form-label">Translation</label>
+            <div id="translation-result" class="translation-area placeholder">Translation will appear here...</div>
+        </div>
+        
+        <div class="actions">
+            <button id="copy-btn" class="action-btn" disabled>📋 Copy</button>
+            <button id="save-btn" class="action-btn" disabled>⭐ Save</button>
+            <button id="clear-btn" class="action-btn">🗑 Clear</button>
+        </div>
+        
+        <div id="recommendations" class="recommendations" style="display: none;">
+            <div class="recommendations-title">🎯 AI Recommendations</div>
+            <div id="recommendations-list"></div>
+        </div>
+    </main>
+
+    <script type="module">
+        // RPC Communication Setup
+        let rpcId = 0;
+        const pendingRequests = new Map();
+
+        const rpcNotify = (method, params) => {
+            window.parent.postMessage({ jsonrpc: "2.0", method, params }, "*");
+        };
+
+        const rpcRequest = (method, params) =>
+            new Promise((resolve, reject) => {
+                const id = ++rpcId;
+                pendingRequests.set(id, { resolve, reject });
+                window.parent.postMessage({ jsonrpc: "2.0", id, method, params }, "*");
+            });
+
+        window.addEventListener("message", (event) => {
+            if (event.source !== window.parent) return;
+            const message = event.data;
+            if (!message || message.jsonrpc !== "2.0") return;
+
+            if (typeof message.id === "number") {
+                const pending = pendingRequests.get(message.id);
+                if (!pending) return;
+                pendingRequests.delete(message.id);
+                if (message.error) pending.reject(message.error);
+                else pending.resolve(message.result);
+            }
+        });
+
+        // UI Elements
+        const targetLangEl = document.getElementById('target-lang');
+        const sourceTextEl = document.getElementById('source-text');
+        const translateBtn = document.getElementById('translate-btn');
+        const resultEl = document.getElementById('translation-result');
+        const copyBtn = document.getElementById('copy-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const statusEl = document.getElementById('status-message');
+        const recommendationsEl = document.getElementById('recommendations');
+        const recommendationsListEl = document.getElementById('recommendations-list');
+
+        // State
+        let currentTranslation = '';
+        let currentOriginal = '';
+
+        // Initialize
+        const initialize = async () => {
+            try {
+                await rpcRequest("ui/initialize", {
+                    appInfo: { name: "caio-translate", version: "1.0.0" },
+                    appCapabilities: {},
+                    protocolVersion: "2026-01-26"
+                });
+                rpcNotify("ui/notifications/initialized", {});
+            } catch (e) {
+                console.error("Initialization error:", e);
+            }
+        };
+
+        // Utility Functions
+        const showStatus = (message, type = 'success') => {
+            statusEl.textContent = message;
+            statusEl.className = `status-message show ${type}`;
+            setTimeout(() => {
+                statusEl.classList.remove('show');
+            }, 3000);
+        };
+
+        const updateUI = (content) => {
+            if (content) {
+                resultEl.textContent = content;
+                resultEl.classList.remove('placeholder', 'loading');
+                currentTranslation = content;
+                copyBtn.disabled = false;
+                saveBtn.disabled = false;
+            }
+        };
+
+        const setLoading = (isLoading) => {
+            translateBtn.disabled = isLoading;
+            if (isLoading) {
+                resultEl.innerHTML = '<div class="loading"><div class="spinner"></div> Translating...</div>';
+                resultEl.classList.add('loading');
+            }
+        };
+
+        // Event Handlers
+        translateBtn.addEventListener('click', async () => {
+            const text = sourceTextEl.value.trim();
+            if (!text) {
+                showStatus('Please enter text to translate', 'error');
+                return;
+            }
+
+            currentOriginal = text;
+            setLoading(true);
+
+            try {
+                const response = await rpcRequest("tools/call", {
+                    name: "caio-translate",
+                    arguments: { text }
+                });
+                
+                if (response?.content?.[0]?.text) {
+                    const result = JSON.parse(response.content[0].text);
+                    updateUI(result.translation || result.original);
+                    showStatus('Translation completed!');
+                    
+                    // Show recommendations if available
+                    if (result.recommendations) {
+                        displayRecommendations(result.recommendations);
+                    }
+                } else {
+                    showStatus('Translation failed', 'error');
+                }
+            } catch (e) {
+                resultEl.textContent = "Error during translation.";
+                resultEl.classList.remove('loading');
+                showStatus('Translation error: ' + (e?.message || 'Unknown error'), 'error');
+                console.error("Translation error:", e);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        copyBtn.addEventListener('click', () => {
+            if (currentTranslation) {
+                navigator.clipboard.writeText(currentTranslation).then(() => {
+                    showStatus('Copied to clipboard!');
+                }).catch(() => {
+                    showStatus('Failed to copy', 'error');
+                });
+            }
+        });
+
+        saveBtn.addEventListener('click', async () => {
+            if (!currentOriginal || !currentTranslation) {
+                showStatus('Nothing to save', 'error');
+                return;
+            }
+
+            try {
+                await rpcRequest("tools/call", {
+                    name: "caio-save",
+                    arguments: {
+                        original: currentOriginal,
+                        translation: currentTranslation
+                    }
+                });
+                showStatus('Translation saved!');
+            } catch (e) {
+                showStatus('Failed to save translation', 'error');
+                console.error("Save error:", e);
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            sourceTextEl.value = '';
+            resultEl.textContent = 'Translation will appear here...';
+            resultEl.classList.add('placeholder');
+            resultEl.classList.remove('loading');
+            currentTranslation = '';
+            currentOriginal = '';
+            copyBtn.disabled = true;
+            saveBtn.disabled = true;
+            recommendationsEl.style.display = 'none';
+        });
+
+        targetLangEl.addEventListener('click', async () => {
+            const lang = prompt('Enter target language:', 'English');
+            if (lang) {
+                try {
+                    await rpcRequest("tools/call", {
+                        name: "caio-update-settings",
+                        arguments: { target_language: lang }
+                    });
+                    targetLangEl.textContent = lang + ' ▼';
+                    showStatus(`Target language set to ${lang}`);
+                } catch (e) {
+                    showStatus('Failed to update language', 'error');
+                }
+            }
+        });
+
+        // Display AI Recommendations
+        const displayRecommendations = (recommendations) => {
+            if (!recommendations || recommendations.length === 0) return;
+            
+            recommendationsListEl.innerHTML = '';
+            recommendations.forEach(rec => {
+                const item = document.createElement('span');
+                item.className = 'recommendation-item';
+                item.textContent = rec.word || rec;
+                recommendationsListEl.appendChild(item);
+            });
+            recommendationsEl.style.display = 'block';
+        };
+
+        // Handle messages from parent
+        window.addEventListener("message", (event) => {
+            if (event.source !== window.parent) return;
+            const message = event.data;
+            if (message?.method === "ui/notifications/tool-result") {
+                if (message.params?.structuredContent?.translation) {
+                    updateUI(message.params.structuredContent.translation);
+                }
+            }
+        }, { passive: true });
+
+        // Start initialization
+        initialize();
+    </script>
+</body>
+</html>
