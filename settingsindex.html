@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>⚙️ CAIO Settings</title>
+    <style>
+        :root {
+            --primary: #007AFF;
+            --bg: #F2F2F7;
+            --card: #FFFFFF;
+            --text: #000000;
+            --text-secondary: #8E8E93;
+            --border: #C6C6C8;
+            --success: #34C759;
+            --error: #FF3B30;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        
+        main {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .header-icon {
+            font-size: 24px;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            font-size: 16px;
+            color: var(--text);
+            background: var(--card);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23007AFF' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+        
+        select:hover {
+            border-color: var(--primary);
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        
+        select option {
+            padding: 10px;
+            background: var(--card);
+            color: var(--text);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .save-btn {
+            background: var(--primary);
+            color: white;
+            flex: 2;
+        }
+        
+        .save-btn:hover:not(:disabled) {
+            background: #0051CC;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 122, 255, 0.3);
+        }
+        
+        .save-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        .save-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .cancel-btn {
+            background: var(--bg);
+            color: var(--primary);
+            border: 1px solid var(--border);
+            flex: 1;
+        }
+        
+        .cancel-btn:hover:not(:disabled) {
+            background: rgba(0, 122, 255, 0.05);
+            border-color: var(--primary);
+        }
+        
+        .status-message {
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .status-message.show {
+            display: block;
+        }
+        
+        .status-message.success {
+            background: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+            border: 1px solid rgba(52, 199, 89, 0.3);
+        }
+        
+        .status-message.error {
+            background: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+            border: 1px solid rgba(255, 59, 48, 0.3);
+        }
+        
+        .status-message.info {
+            background: rgba(0, 122, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(0, 122, 255, 0.3);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .info-box {
+            background: rgba(0, 122, 255, 0.05);
+            border: 1px solid rgba(0, 122, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        .info-box strong {
+            color: var(--text);
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--border);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .current-setting {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 480px) {
+            main {
+                padding: 16px;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            button {
+                font-size: 14px;
+                padding: 12px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="header">
+            <div class="header-icon">⚙️</div>
+            <h1>Settings</h1>
+        </div>
+        
+        <div id="status-message" class="status-message"></div>
+        
+        <div class="form-group">
+            <label for="target-language">Target Language</label>
+            <select id="target-language">
+                <option value="English">English</option>
+                <option value="Arabic">العربية (Arabic)</option>
+                <option value="French">Français (French)</option>
+                <option value="German">Deutsch (German)</option>
+                <option value="Spanish">Español (Spanish)</option>
+                <option value="Japanese">日本語 (Japanese)</option>
+                <option value="Chinese">中文 (Chinese)</option>
+                <option value="Italian">Italiano (Italian)</option>
+                <option value="Russian">Русский (Russian)</option>
+                <option value="Turkish">Türkçe (Turkish)</option>
+            </select>
+            <div class="current-setting" id="current-setting"></div>
+        </div>
+        
+        <div class="info-box">
+            <strong>💡 Tip:</strong> Your target language preference will be saved and used for all future translations.
+        </div>
+        
+        <div class="button-group">
+            <button class="cancel-btn" id="cancel-btn">Cancel</button>
+            <button class="save-btn" id="save-settings">
+                <span>Save Changes</span>
+            </button>
+        </div>
+    </main>
+
+    <script type="module">
+        // RPC Communication Setup
+        let rpcId = 0;
+        const pendingRequests = new Map();
+
+        const rpcRequest = (method, params) =>
+            new Promise((resolve, reject) => {
+                const id = ++rpcId;
+                pendingRequests.set(id, { resolve, reject });
+                window.parent.postMessage({ jsonrpc: "2.0", id, method, params }, "*");
+            });
+
+        const rpcNotify = (method, params) => {
+            window.parent.postMessage({ jsonrpc: "2.0", method, params }, "*");
+        };
+
+        window.addEventListener("message", (event) => {
+            if (event.source !== window.parent) return;
+            const message = event.data;
+            if (!message || message.jsonrpc !== "2.0") return;
+
+            if (typeof message.id === "number") {
+                const pending = pendingRequests.get(message.id);
+                if (!pending) return;
+                pendingRequests.delete(message.id);
+                if (message.error) pending.reject(message.error);
+                else pending.resolve(message.result);
+            }
+        });
+
+        // UI Elements
+        const saveBtn = document.getElementById('save-settings');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const langSelect = document.getElementById('target-language');
+        const statusEl = document.getElementById('status-message');
+        const currentSettingEl = document.getElementById('current-setting');
+
+        // State
+        let originalLanguage = 'English';
+        let isSaving = false;
+
+        // Initialize
+        const initialize = async () => {
+            try {
+                await rpcRequest("ui/initialize", {
+                    appInfo: { name: "caio-settings", version: "1.0.0" },
+                    appCapabilities: {},
+                    protocolVersion: "2026-01-26"
+                });
+                rpcNotify("ui/notifications/initialized", {});
+                
+                // Load current settings
+                await loadCurrentSettings();
+            } catch (e) {
+                console.error("Initialization error:", e);
+                showStatus('Failed to initialize settings', 'error');
+            }
+        };
+
+        // Load current settings
+        const loadCurrentSettings = async () => {
+            try {
+                const response = await rpcRequest("tools/call", {
+                    name: "caio-get-settings",
+                    arguments: {}
+                });
+                
+                if (response?.content?.[0]?.text) {
+                    const result = JSON.parse(response.content[0].text);
+                    const currentLang = result.settings?.target_language || 'English';
+                    originalLanguage = currentLang;
+                    langSelect.value = currentLang;
+                    updateCurrentSetting(currentLang);
+                    showStatus(`Current language: ${currentLang}`, 'info');
+                }
+            } catch (e) {
+                console.error("Error loading settings:", e);
+                showStatus('Could not load current settings', 'error');
+            }
+        };
+
+        // Update current setting display
+        const updateCurrentSetting = (lang) => {
+            currentSettingEl.textContent = `Current: ${lang}`;
+        };
+
+        // Show status message
+        const showStatus = (message, type = 'success') => {
+            statusEl.textContent = message;
+            statusEl.className = `status-message show ${type}`;
+            
+            if (type !== 'error') {
+                setTimeout(() => {
+                    statusEl.classList.remove('show');
+                }, 3000);
+            }
+        };
+
+        // Save settings
+        saveBtn.addEventListener('click', async () => {
+            const selectedLang = langSelect.value;
+            
+            if (!selectedLang) {
+                showStatus('Please select a language', 'error');
+                return;
+            }
+            
+            if (selectedLang === originalLanguage) {
+                showStatus('No changes to save', 'info');
+                return;
+            }
+            
+            isSaving = true;
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<div class="spinner"></div> <span>Saving...</span>';
+            
+            try {
+                const response = await rpcRequest("tools/call", {
+                    name: "caio-update-settings",
+                    arguments: { target_language: selectedLang }
+                });
+                
+                if (response?.content?.[0]?.text) {
+                    const result = JSON.parse(response.content[0].text);
+                    if (result.status === 'success') {
+                        originalLanguage = selectedLang;
+                        updateCurrentSetting(selectedLang);
+                        showStatus('✓ Settings saved successfully!', 'success');
+                    } else {
+                        showStatus('Failed to save settings: ' + (result.error || 'Unknown error'), 'error');
+                    }
+                }
+            } catch (e) {
+                console.error("Save error:", e);
+                showStatus('Error saving settings: ' + (e?.message || 'Unknown error'), 'error');
+            } finally {
+                isSaving = false;
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<span>Save Changes</span>';
+            }
+        });
+
+        // Cancel button
+        cancelBtn.addEventListener('click', () => {
+            langSelect.value = originalLanguage;
+            showStatus('Changes cancelled', 'info');
+        });
+
+        // Start initialization
+        initialize();
+    </script>
+</body>
+</html>
